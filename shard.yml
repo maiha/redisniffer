@@ -1,0 +1,23 @@
+name: redisniffer
+version: 0.3.0
+
+dependencies:
+  pcap:
+    github: maiha/pcap.cr
+    version: 0.2.7
+  redis-cluster:
+    github: maiha/redis-cluster.cr
+    version: 0.7.4
+  app:
+    github: maiha/app.cr
+    version: 0.3.6
+
+authors:
+  - maiha <maiha@wota.jp>
+
+targets:
+  redisniffer:
+    main: src/redisniffer.cr
+
+
+license: MIT

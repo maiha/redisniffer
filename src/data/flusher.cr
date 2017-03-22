@@ -3,4 +3,5 @@ module Flusher
   alias Data = Hash(Int32, Stat)
 
   abstract def flush(hash : Data) : Nil
+  property! interval : Time::Span?
 end

@@ -1,5 +1,5 @@
 class Program
-  def initialize(@pcap : Pcap::Capture, @ports : Set(Int32), @blacklist : Hash(String, Bool), @flusher : Flusher, @interval : Time::Span = 1.second, @verbose : Bool = false)
+  def initialize(@pcap : Pcap::Capture, @ports : Set(Int32), @blacklist : Hash(String, Bool), @flusher : Flusher, @verbose : Bool = false)
   end
 
   def run
@@ -16,7 +16,7 @@ class Program
 
       case pkt.tcp_data.to_s
       when /\A\*\d+\r\n\$\d+\r\n(.*?)\r/
-        cmd = $1
+        cmd = $1.upcase
         unless @blacklist[cmd]?
           hash[port] ||= Hash(String, Int32).new { 0 }
           hash[port][cmd] += 1
@@ -24,7 +24,7 @@ class Program
         end                            
       end
 
-      if Time.now > last_flushed_at + @interval
+      if Time.now > last_flushed_at + flusher.interval
         flusher.flush(hash)
         hash.clear
         last_flushed_at = Time.now

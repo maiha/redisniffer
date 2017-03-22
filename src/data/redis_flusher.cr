@@ -10,10 +10,11 @@ class RedisFlusher
     
   def flush(data : Data)
     prefix = Time.now.to_s(@time_format)
+    ttl = @ttl.total_seconds.to_i
     data.each do |port, stat|
       key = key_builder.call(prefix, port)
       @redis.set(key, stat.inspect)
-      @redis.expire(key, @ttl.seconds)
+      @redis.expire(key, ttl)
     end
   end
 

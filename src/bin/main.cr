@@ -13,6 +13,7 @@ class Main
   option verbose  : Bool   , "-v", "Verbose output", false
   option quiet    : Bool   , "-q", "Turn off output", false
   option interval : Int32  , "--interval 3", "Flush interval sec", 3
+  option deny     : String , "--deny REPLCONF", "Not included in statistics", "REPLCONF,MONITOR"
   option version  : Bool   , "--version", "Print the version and exit", false
   option help     : Bool   , "--help"   , "Output this help and exit" , false
 
@@ -20,7 +21,7 @@ class Main
   
   def run
     @pcap_filter = build_filter
-    prog = Program.new(open_pcap, ports: listen_ports, blacklist: acl(["REPLCONF"]), flusher: build_flusher, verbose: verbose)
+    prog = Program.new(open_pcap, ports: listen_ports, deny: acl(deny), flusher: build_flusher, verbose: verbose)
     prog.run
   end
 
@@ -53,13 +54,8 @@ class Main
     Set(Int32).new.tap { |set| filter.scan(/port\s+(\d+)/i){ set << $1.to_i} }
   end
 
-  private def acl(names)
-    Hash(String, Bool).new.tap do |s|
-      names.each do |k|
-        s[k.upcase] = true
-        s[k.downcase] = true
-      end
-    end
+  private def acl(cmd)
+    cmd.split(/,/).map(&.upcase.strip).to_set
   end
 
   private def build_flusher : Flusher

@@ -14,6 +14,7 @@ class Main
   option quiet    : Bool   , "-q", "Turn off output", false
   option interval : Int32  , "--interval 3", "Flush interval sec", 3
   option deny     : String , "--deny REPLCONF", "Not included in statistics", "REPLCONF,MONITOR"
+  option redisfmt : String , "--output-redis-key format", "Stored redis key format", "{PORT}/{TIME}"
   option version  : Bool   , "--version", "Print the version and exit", false
   option help     : Bool   , "--help"   , "Output this help and exit" , false
 
@@ -64,7 +65,7 @@ class Main
       when "-"
         StdoutFlusher.new
       when %r(^redis://)
-        RedisFlusher.new(Redis::Client.boot(output))
+        RedisFlusher.new(Redis::Client.boot(output), key_format: redisfmt)
       else
         die "unknown output: #{output}"
       end.tap(&.interval = interval.seconds)

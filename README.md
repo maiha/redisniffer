@@ -34,15 +34,15 @@ This watches `6379` port on `eth0` and writes stats into redis(port=6000) as `ZS
 
 Three `ZSET` entries related to the time will be updated.
 
-- "{zcmds}:6379:20170322"
-- "{zcmds}:6379:2017032217"
-- "{zcmds}:6379:201703221737"
+- "6379/20170322"
+- "6379/2017032217"
+- "6379/201703221737"
 
 Thus, we can easily get cmd stats by `ZRANGE` about three kind of time-series.
 
 ```shell
 # want to know top 3 commands at 20170322 on port 6379
-% redis-cli -p 6000 ZREVRANGE "{zcmds}:6379:20170322" 0 2 WITHSCORES
+% redis-cli -p 6000 ZREVRANGE "6379/20170322" 0 2 WITHSCORES
 1) "DEL"
 2) "174"
 3) "SET"
@@ -53,9 +53,10 @@ Thus, we can easily get cmd stats by `ZRANGE` about three kind of time-series.
 
 #### NOTES
 
-- "{zcmds}" is hard-coded.
-- time-series are hard-coded.
+- time-series are hard-coded. (daily, hourly, every minute)
 - ttl is hard-coded. (4.weeks, 3.days, 3.hours)
+- key format is "{PORT}/{TIME}" in default. (`--output-redis-key` option overrides it)
+  - where `{PORT}` and `{TIME}` are reserved words those will be replaced with runtime values.
 
 see: [src/data/redis_flusher.cr](src/data/redis_flusher.cr)
 

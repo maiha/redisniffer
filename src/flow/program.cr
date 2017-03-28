@@ -1,9 +1,10 @@
 class Program
-  def initialize(@pcap : Pcap::Capture, @ports : Set(Int32), @deny : Set(String), @flusher : Flusher, @verbose : Bool = false)
+  def initialize(@pcap : Pcap::Capture, @ports : Set(Int32), @deny : Set(String), @flusher : Flusher, @include_ip : Bool = false, @verbose : Bool = false)
   end
 
   def run
-    hash = Flusher::Data.new # port => {cmd => count}
+    stats = Flusher::Data.new # port => {cmd => count}
+    addrs = Flusher::Data.new # port => {ip_addr => count}
     last_flushed_at = Time.now
     flusher = @flusher
 
@@ -18,13 +19,19 @@ class Program
       when /\A\*\d+\r\n\$\d+\r\n(.*?)\r/
         cmd = $1.upcase
         next if @deny.includes?(cmd)
-        hash[port] ||= Hash(String, Int32).new { 0 }
-        hash[port][cmd] += 1
+        stats[port] ||= Hash(String, Int32).new { 0 }
+        stats[port][cmd] += 1
+
+        if @include_ip
+          addrs[port] ||= Hash(String, Int32).new { 0 }
+          addrs[port][pkt.ip_header.src_str] += 1
+        end
       end
 
       if Time.now > last_flushed_at + flusher.interval
-        flusher.flush(hash)
-        hash.clear
+        flusher.flush(stats, addrs)
+        stats.clear
+        addrs.clear
         last_flushed_at = Time.now
       end
     end

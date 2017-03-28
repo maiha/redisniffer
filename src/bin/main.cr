@@ -5,16 +5,18 @@ class Main
   include Opts
 
   option device   : String , "-i interface", "Listen on interface", "lo"
-  option output   : String , "-o uri", "Output uri (stdout, redis)", "-"
+  option output   : String , "-o uri", "Output uri (stdout, file://, redis://)", "-"
   option port     : String , "-p 6379,6380", "Capture port (overridden by -f)", "6379"
   option filter   : String?, "-f 'tcp port 6379'", "Pcap filter string. See pcap-filter(7)", nil
   option snaplen  : Int32  , "-s 1500", "Capture snapshot length", 1500
   option timeout  : Int32  , "-t 1000", "Capture timeout milliseconds", 1000
-  option verbose  : Bool   , "-v", "Verbose output", false
-  option quiet    : Bool   , "-q", "Turn off output", false
   option deny     : String , "--deny REPLCONF", "Not included in statistics", "REPLCONF,MONITOR"
   option interval : Int32  , "--out-interval 3", "Output flush interval sec", 3
-  option redisfmt : String , "--out-redis-key format", "Stored redis key format", "{PORT}/{TIME}"
+  option cmd_fmt  : String , "--out-cmd-key format", "Stored redis key of cmd stats", "{PORT}/{TIME}"
+  option ip_fmt   : String , "--out-ip-key format", "Stored redis key of client ip addrs", "{PORT}/{TIME}/ip"
+  option need_ip  : Bool   , "--include-ip", "Store client ip address", false
+  option verbose  : Bool   , "-v", "Verbose output", false
+  option quiet    : Bool   , "-q", "Turn off output", false
   option version  : Bool   , "--version", "Print the version and exit", false
   option help     : Bool   , "--help"   , "Output this help and exit" , false
 
@@ -22,7 +24,7 @@ class Main
   
   def run
     @pcap_filter = build_filter
-    prog = Program.new(open_pcap, ports: listen_ports, deny: acl(deny), flusher: build_flusher, verbose: verbose)
+    prog = Program.new(open_pcap, ports: listen_ports, deny: acl(deny), include_ip: need_ip, flusher: build_flusher, verbose: verbose)
     prog.run
   end
 
@@ -63,9 +65,12 @@ class Main
     flusher =
       case output
       when "-"
-        StdoutFlusher.new
+        IOFlusher.new(io: STDOUT, clue: "Stdout")
+      when %r(^file://(.*))
+        path = $1.strip
+        IOFlusher.new(io: File.open(path, "w+"), clue: path)
       when %r(^redis://)
-        RedisFlusher.new(Redis::Client.boot(output), key_format: redisfmt)
+        RedisFlusher.new(Redis::Client.boot(output), cmd_format: cmd_fmt, ip_format: ip_fmt)
       else
         die "unknown output: #{output}"
       end.tap(&.interval = interval.seconds)

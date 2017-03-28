@@ -7,20 +7,23 @@ Sniff redis packets and summarize count of commands.
 ## Usage
 
 ```shell
-% redisniffer -p '6379'
+% redisniffer
 listening on lo about '(tcp port 6379)' (snaplen: 1500, timeout: 1000)
 output: Stdout
-[6379, {"ping" => 1}]
-[6379, {"get" => 1, "ping" => 1}]
+[6379, {"PING" => 1}, nil]
+[6379, {"GET" => 1}, nil]
 ```
 
 ## Options
 
 - `-p 6379,7001,7002` : capture port
 - `--deny MONITOR,PING` : these cmds are not stored in stats
+- `--include-ip` : stores client ip addresses too
 - `-o redis://localhost:6379` : write stats into redis rather than stdout
+- `-o file://cmds.log` : write stats into file than stdout
+- see `redisniffer --help` for more options
 
-## Outputs
+## Redis output
 
 `-o` option enables you to store stats in redis.
 
@@ -55,15 +58,17 @@ Thus, we can easily get cmd stats by `ZRANGE` about three kind of time-series.
 
 - time-series are hard-coded. (daily, hourly, every minute)
 - ttl is hard-coded. (4.weeks, 3.days, 3.hours)
-- key format is "{PORT}/{TIME}" in default. (`--out-redis-key` option overrides it)
+- key format is "{PORT}/{TIME}" in default. (`--out-cmd-key` option overrides it)
   - where `{PORT}` and `{TIME}` are reserved words those will be replaced with runtime values.
 
 see: [src/data/redis_flusher.cr](src/data/redis_flusher.cr)
 
 ## Roadmap
 
-- use pipeline in storing into redis
-- write tests
+- [x] file output
+- [ ] use pipeline in storing into redis
+- [x] store client ip address into redis
+- [x] write tests
 
 ## Development
 

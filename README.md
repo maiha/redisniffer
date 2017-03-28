@@ -1,4 +1,4 @@
-# redisniffer.cr
+# redisniffer.cr [![Build Status](https://travis-ci.org/maiha/redisniffer.svg?branch=master)](https://travis-ci.org/maiha/redisniffer)
 
 Sniff redis packets and summarize count of commands.
 

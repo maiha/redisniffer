@@ -25,7 +25,7 @@ output: Stdout
 `-o` option enables you to store stats in redis.
 
 ```shell
-% redisniffer -i eth0 -p 6379 -o redis://localhost:6000 --interval 60
+% redisniffer -i eth0 -p 6379 -o redis://localhost:6000 --out-interval 60
 ```
 
 This watches `6379` port on `eth0` and writes stats into redis(port=6000) as `ZSET` every minute.
@@ -55,7 +55,7 @@ Thus, we can easily get cmd stats by `ZRANGE` about three kind of time-series.
 
 - time-series are hard-coded. (daily, hourly, every minute)
 - ttl is hard-coded. (4.weeks, 3.days, 3.hours)
-- key format is "{PORT}/{TIME}" in default. (`--output-redis-key` option overrides it)
+- key format is "{PORT}/{TIME}" in default. (`--out-redis-key` option overrides it)
   - where `{PORT}` and `{TIME}` are reserved words those will be replaced with runtime values.
 
 see: [src/data/redis_flusher.cr](src/data/redis_flusher.cr)

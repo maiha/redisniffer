@@ -5,16 +5,16 @@ class Main
   include Opts
 
   option device   : String , "-i interface", "Listen on interface", "lo"
-  option output   : String , "-o uri", "Output uri (file, redis)", "-"
+  option output   : String , "-o uri", "Output uri (stdout, redis)", "-"
   option port     : String , "-p 6379,6380", "Capture port (overridden by -f)", "6379"
   option filter   : String?, "-f 'tcp port 6379'", "Pcap filter string. See pcap-filter(7)", nil
-  option snaplen  : Int32  , "-s 1500", "Snapshot length", 1500
-  option timeout  : Int32  , "-t 1000", "Timeout milliseconds", 1000
+  option snaplen  : Int32  , "-s 1500", "Capture snapshot length", 1500
+  option timeout  : Int32  , "-t 1000", "Capture timeout milliseconds", 1000
   option verbose  : Bool   , "-v", "Verbose output", false
   option quiet    : Bool   , "-q", "Turn off output", false
-  option interval : Int32  , "--interval 3", "Flush interval sec", 3
   option deny     : String , "--deny REPLCONF", "Not included in statistics", "REPLCONF,MONITOR"
-  option redisfmt : String , "--output-redis-key format", "Stored redis key format", "{PORT}/{TIME}"
+  option interval : Int32  , "--out-interval 3", "Output flush interval sec", 3
+  option redisfmt : String , "--out-redis-key format", "Stored redis key format", "{PORT}/{TIME}"
   option version  : Bool   , "--version", "Print the version and exit", false
   option help     : Bool   , "--help"   , "Output this help and exit" , false
 

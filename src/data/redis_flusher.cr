@@ -3,13 +3,13 @@ class RedisFlusher
 
   record Degree, key : String, ttl : Int32
 
-  def initialize(@redis : Redis::Client, @cmd_format : String = "{PORT}/{TIME}", @ip_format : String = "{PORT}/{TIME}/ip")
+  def initialize(@redis : Redis::Client, @cmd_format : String = "{PORT}/{TIME}", @ip_format : String = "{PORT}/{TIME}/ip", @error_report : Bool = false)
     @stat_degrees = [] of Degree
     @stat_degrees << Degree.new("%Y%m%d"    , 4.weeks.total_seconds.to_i)
     @stat_degrees << Degree.new("%Y%m%d%H"  , 3.days.total_seconds.to_i)
     @stat_degrees << Degree.new("%Y%m%d%H%M", 3.hours.total_seconds.to_i)
     @ip_degree = Degree.new("%Y%m%d", 4.weeks.total_seconds.to_i)
-    @reporter = Periodical::Counter.new(interval: 1.minute, time_format: "%Y-%m-%d %H:%M:%S")
+    @reporter = Periodical::Counter.new(interval: 1.minute, time_format: "%Y-%m-%d %H:%M:%S", error_report: @error_report)
   end
 
   def flush(stats : Data, addrs : Data)

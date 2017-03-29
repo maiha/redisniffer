@@ -4,6 +4,7 @@ require "app"
 require "try"
 require "pcap"
 require "redis-cluster"
+require "similar_logs"
 
 require "./lib/**"
 require "./data/**"

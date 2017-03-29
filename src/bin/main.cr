@@ -14,6 +14,7 @@ class Main
   option interval : Int32  , "--out-interval 3", "Output flush interval sec", 3
   option cmd_fmt  : String , "--out-cmd-key format", "Stored redis key of cmd stats", "{PORT}/{TIME}"
   option ip_fmt   : String , "--out-ip-key format", "Stored redis key of client ip addrs", "{PORT}/{TIME}/ip"
+  option no_err   : Bool   , "--disable-out-err", "Disable error messages about output", false
   option need_ip  : Bool   , "--include-ip", "Store client ip address", false
   option verbose  : Bool   , "-v", "Verbose output", false
   option quiet    : Bool   , "-q", "Turn off output", false
@@ -70,7 +71,7 @@ class Main
         path = $1.strip
         IOFlusher.new(io: File.open(path, "w+"), clue: path)
       when %r(^redis://)
-        RedisFlusher.new(Redis::Client.boot(output), cmd_format: cmd_fmt, ip_format: ip_fmt)
+        RedisFlusher.new(Redis::Client.boot(output), cmd_format: cmd_fmt, ip_format: ip_fmt, error_report: ! no_err)
       else
         die "unknown output: #{output}"
       end.tap(&.interval = interval.seconds)

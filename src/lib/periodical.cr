@@ -6,7 +6,7 @@ module Periodical
 
     @stopped_at : Time?
 
-    def initialize(@total : Int32? = nil, @index : Int32 = 0, @ok : Int32 = 0, @ko : Int32 = 0, @errors : Set(String) = Set(String).new, @color : Bool = true, @span : Time::Span = Time::Span::Zero, @time_format : String = "%H:%M:%S")
+    def initialize(@total : Int32? = nil, @index : Int32 = 0, @ok : Int32 = 0, @ko : Int32 = 0, @errors : SimilarLogs = SimilarLogs.new, @color : Bool = true, @span : Time::Span = Time::Span::Zero, @time_format : String = "%H:%M:%S")
       @started_at = Time.now
       @count = 0
     end
@@ -119,7 +119,7 @@ module Periodical
   end
 
   class Counter
-    def initialize(@interval : Time::Span, max : Int32? = nil, @io : IO? = STDOUT, @color : Bool = true, @time_format : String = "%H:%M:%S")
+    def initialize(@interval : Time::Span, max : Int32? = nil, @io : IO? = STDOUT, @color : Bool = true, @time_format : String = "%H:%M:%S", @error_report : Bool = false)
       raise "#{self.class} expects max > 0, bot got #{max}" if max.try(&.<= 0)
 
       @total   = StatusCounter.new(total: max, time_format: @time_format)
@@ -153,6 +153,7 @@ module Periodical
     def report
       if @current.spent > @interval
         write(@current.status)
+        write(@current.errors.map{|i| "  #{i}"}.join("\n")) if @error_report
         @current = @current.next
       end
     end

@@ -1,10 +1,12 @@
-# redisniffer.cr [![Build Status](https://travis-ci.org/maiha/redisniffer.svg?branch=master)](https://travis-ci.org/maiha/redisniffer)
+# redisniffer [![Build Status](https://travis-ci.org/maiha/redisniffer.svg?branch=master)](https://travis-ci.org/maiha/redisniffer)
 
 Sniff redis packets and summarize count of commands.
 
 - x86_64 binary: https://github.com/maiha/redisniffer/releases
 
 ## Usage
+
+Needs `root` user or privilege to the device.
 
 ```shell
 % redisniffer
@@ -19,9 +21,10 @@ output: Stdout
 - `-p 6379,7001,7002` : capture port
 - `--deny MONITOR,PING` : these cmds are not stored in stats
 - `--include-ip` : stores client ip addresses too
-- `-o redis://localhost:6379` : write stats into redis rather than stdout
-- `-o file://cmds.log` : write stats into file than stdout
-- see `redisniffer --help` for more options
+- `-o redis://localhost:6379` : write stats into redis
+- `-o file://cmds.log` : write stats into file
+
+See `redisniffer --help` for more options
 
 ## Redis output
 

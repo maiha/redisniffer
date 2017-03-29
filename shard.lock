@@ -32,6 +32,10 @@ shards:
     github: maiha/shard.cr
     version: 0.2.0
 
+  similar_logs:
+    github: maiha/similar_logs.cr
+    version: 0.1.0
+
   toml:
     github: maiha/crystal-toml
     version: 0.6.0

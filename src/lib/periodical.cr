@@ -126,7 +126,7 @@ module Periodical
       @current = StatusCounter.new(total: max, time_format: @time_format)
     end
 
-    def succ
+    def succ(raise : Bool = false)
       t1 = Time.now
       yield
       span = Time.now - t1
@@ -135,6 +135,7 @@ module Periodical
     rescue err
       @current.ko!(err)
       @total.ko!(err)
+      ::raise err if raise
     ensure
       report
     end
@@ -153,7 +154,7 @@ module Periodical
     def report
       if @current.spent > @interval
         write(@current.status)
-        write(@current.errors.map{|i| "  #{i}"}.join("\n")) if @error_report
+        write(@current.errors.map{|i| "  #{i}"}.join("\n")) if @error_report && @current.errors.any?
         @current = @current.next
       end
     end

@@ -71,7 +71,7 @@ class Main
         path = $1.strip
         IOFlusher.new(io: File.open(path, "w+"), clue: path)
       when %r(^redis://)
-        RedisFlusher.new(Redis::Client.boot(output), cmd_format: cmd_fmt, ip_format: ip_fmt, error_report: ! no_err)
+        RedisFlusher.new(Redis::Client.boot(output), cmd_fmt: cmd_fmt, ip_fmt: ip_fmt, error_report: ! no_err)
       else
         die "unknown output: #{output}"
       end.tap(&.interval = interval.seconds)

@@ -1,5 +1,9 @@
 require "../spec_helper"
 
+private def fixed_slot?(str)
+  RedisFlusher.fixed_slot?(str)
+end
+
 describe RedisFlusher do
   redis = Redis::Client.new
 
@@ -29,7 +33,7 @@ describe RedisFlusher do
 
     it "respects `stat_format`" do
       redis.flushall
-      flusher = RedisFlusher.new(redis, cmd_format: "x{PORT}")
+      flusher = RedisFlusher.new(redis, cmd_fmt: "x{PORT}")
 
       stats = Flusher::Data.new
       addrs = Flusher::Data.new
@@ -70,9 +74,9 @@ describe RedisFlusher do
       values.map(&.inspect).sort.should eq(expected)
     end
 
-    it "respects `cmd_format`" do
+    it "respects `cmd_fmt`" do
       redis.flushall
-      flusher = RedisFlusher.new(redis, ip_format: "all_clients")
+      flusher = RedisFlusher.new(redis, ip_fmt: "all_clients")
       stats = Flusher::Data.new
       addrs = Flusher::Data.new
 
@@ -86,6 +90,23 @@ describe RedisFlusher do
         %(["192.168.0.1", "10", "127.0.0.1", "6"]),
       ]
       values.map(&.inspect).sort.should eq(expected)
+    end
+  end
+
+  describe ".fixed_slot?" do
+    it "returns true if no PORT and TIME" do
+      fixed_slot?("a").should eq(true)
+      fixed_slot?("a/b").should eq(true)
+    end
+
+    it "returns true if hash tag exists" do
+      fixed_slot?("{a}").should eq(true)
+      fixed_slot?("{a}/{PORT}/{TIME}").should eq(true)
+    end
+
+    it "returns false if hash tag is missing but PORT or TIME exists" do
+      fixed_slot?("{PORT}/{TIME}").should eq(false)
+      fixed_slot?("a/{PORT}/{TIME}").should eq(false)
     end
   end
 end

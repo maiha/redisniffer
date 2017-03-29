@@ -69,7 +69,7 @@ see: [src/data/redis_flusher.cr](src/data/redis_flusher.cr)
 ## Roadmap
 
 - [x] file output
-- [ ] use pipeline in storing into redis
+- [x] use pipeline in storing into redis
 - [x] store client ip address into redis
 - [x] write tests
 

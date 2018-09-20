@@ -6,7 +6,7 @@ module Periodical
 
     @stopped_at : Time?
 
-    def initialize(@total : Int32? = nil, @index : Int32 = 0, @ok : Int32 = 0, @ko : Int32 = 0, @errors : SimilarLogs = SimilarLogs.new, @color : Bool = true, @span : Time::Span = Time::Span::Zero, @time_format : String = "%H:%M:%S")
+    def initialize(@total : Int32? = nil, @index : Int32 = 0, @ok : Int32 = 0, @ko : Int32 = 0, @errors : SimilarLogs = SimilarLogs.new, @color : Bool = true, @span : Time::Span = Time::Span::ZERO, @time_format : String = "%H:%M:%S")
       @started_at = Time.now
       @count = 0
     end

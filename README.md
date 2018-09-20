@@ -75,7 +75,7 @@ see: [src/data/redis_flusher.cr](src/data/redis_flusher.cr)
 
 ## Development
 
-- crystal: 0.21.1
+- crystal: 0.26.1
 - needs `libpcap`
 - type `make`
 

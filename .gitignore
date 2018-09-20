@@ -4,3 +4,4 @@
 /.shards/
 /.crystal-version
 /redisniffer
+/shard.lock

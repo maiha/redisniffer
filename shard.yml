@@ -4,23 +4,20 @@ version: 0.5.0
 dependencies:
   pcap:
     github: maiha/pcap.cr
-    version: ">= 0.5.0"
   redis-cluster:
     github: maiha/redis-cluster.cr
-    version: ">= 0.8.0"
   similar_logs:
     github: maiha/similar_logs.cr
-    version: ">= 0.1.0"
+  pretty:
+    github: maiha/pretty.cr
   app:
     github: maiha/app.cr
-    version: ">= 0.5.0"
 
 authors:
   - maiha <maiha@wota.jp>
 
 targets:
   redisniffer:
-    main: src/redisniffer.cr
-
+    main: src/bin/main.cr
 
 license: MIT

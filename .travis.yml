@@ -7,4 +7,4 @@ addons:
       - redis-server
       - libpcap-dev
 script:
-  - make test
+  - make ci

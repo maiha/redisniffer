@@ -1,27 +1,18 @@
-SHELL = /bin/bash
-LINK_FLAGS = --link-flags "-static"
 PROG = redisniffer
-
-.PHONY : all clean bin test spec
-.PHONY : ${PROGS}
 
 all: static
 
-test: compile static version spec
+ci: spec release version
 
-static: src/bin/main.cr
-	crystal build $^ -o ${PROG} ${LINK_FLAGS}
+static:
+	shards build $(PROG) --link-flags "-static"
 
-release: src/bin/main.cr
-	crystal build --release $^ -o ${PROG} ${LINK_FLAGS}
+release:
+	shards build $(PROG) --link-flags "-static" --release
 
+.PHONY: spec
 spec:
 	crystal spec -v
 
-compile:
-	@for x in src/bin/*.cr ; do\
-	  crystal build "$$x" -o /dev/null ;\
-	done
-
-version: ${PROG}
-	./$^ --version
+version: ./bin/${PROG}
+	$^ --version

@@ -5,7 +5,7 @@ class Program
   def run
     stats = Flusher::Data.new # port => {cmd => count}
     addrs = Flusher::Data.new # port => {ip_addr => count}
-    last_flushed_at = Time.now
+    last_flushed_at = Pretty.now
     flusher = @flusher
 
     @pcap.loop do |pkt|
@@ -28,11 +28,11 @@ class Program
         end
       end
 
-      if Time.now > last_flushed_at + flusher.interval
+      if Pretty.now > last_flushed_at + flusher.interval
         flusher.flush(stats, addrs)
         stats.clear
         addrs.clear
-        last_flushed_at = Time.now
+        last_flushed_at = Pretty.now
       end
     end
   end

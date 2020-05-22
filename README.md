@@ -75,9 +75,21 @@ see: [src/data/redis_flusher.cr](src/data/redis_flusher.cr)
 
 ## Development
 
-- crystal: 0.26.1
+- crystal: 0.34.0
 - needs `libpcap`
-- type `make`
+
+```console
+$ make static  # creates 'bin/redisniffer' with static compile
+$ make release # creates 'bin/redisniffer' with static and optimized
+```
+
+## Test
+
+CAUTION: This deletes all data in redis that running on current localhost:6379.
+
+```console
+$ make ci
+```
 
 ## Contributing
 

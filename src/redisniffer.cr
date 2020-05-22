@@ -3,6 +3,7 @@ require "colorize"
 require "app"
 require "try"
 require "pcap"
+require "pretty"
 require "redis-cluster"
 require "similar_logs"
 

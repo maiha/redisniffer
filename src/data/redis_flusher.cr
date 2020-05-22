@@ -18,7 +18,7 @@ class RedisFlusher
   end
 
   def flush(stats : Data, addrs : Data)
-    now = Time.now
+    now = Pretty.now
     if @pipeline_mode
       # We can use pipeline for the case of server is in single node or all keys are in same node.
       @client.pipelined(resolve_key(@cmd_fmt), reconnect: true) do |redis|
@@ -33,7 +33,7 @@ class RedisFlusher
   rescue err
     # Report immediately if unexpected errors happened.
     # Then, close redis in order to create a new connection in next request.
-    STDERR.puts "#{Time.now}: unexpected error(#{err.class}) in `#{self.class}#flush'"
+    STDERR.puts "#{Pretty.now}: unexpected error(#{err.class}) in `#{self.class}#flush'"
     STDERR.puts err.inspect_with_backtrace
   end
 

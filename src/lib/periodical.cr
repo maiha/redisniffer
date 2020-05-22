@@ -7,7 +7,7 @@ module Periodical
     @stopped_at : Time?
 
     def initialize(@total : Int32? = nil, @index : Int32 = 0, @ok : Int32 = 0, @ko : Int32 = 0, @errors : SimilarLogs = SimilarLogs.new, @color : Bool = true, @span : Time::Span = Time::Span::ZERO, @time_format : String = "%H:%M:%S")
-      @started_at = Time.now
+      @started_at = Pretty.now
       @count = 0
     end
 
@@ -31,7 +31,7 @@ module Periodical
     end
     
     def done!
-      @stopped_at ||= Time.now
+      @stopped_at ||= Pretty.now
     end
 
     def done?
@@ -40,7 +40,7 @@ module Periodical
 
     def status
       err = ko > 0 ? "# KO: #{ko}" : ""
-      now = @stopped_at || Time.now
+      now = @stopped_at || Pretty.now
       hms = now.to_s(@time_format)
       if done?
         if @total
@@ -88,7 +88,7 @@ module Periodical
       [@index * 100.0 / total, 100.0].min
     end
 
-    def spent(now = @stopped_at || Time.now)
+    def spent(now = @stopped_at || Pretty.now)
       now - @started_at
     end
 
@@ -96,7 +96,7 @@ module Periodical
       spent.total_seconds
     end
 
-    def qps(now = @stopped_at || Time.now)
+    def qps(now = @stopped_at || Pretty.now)
       "%.1f qps" % (@count*1000.0 / spent.total_milliseconds)
     rescue
       "--- qps"
@@ -127,9 +127,9 @@ module Periodical
     end
 
     def succ(raise : Bool = false)
-      t1 = Time.now
+      t1 = Pretty.now
       yield
-      span = Time.now - t1
+      span = Pretty.now - t1
       @current.ok!(span)
       @total.ok!(span)
     rescue err
@@ -166,7 +166,7 @@ module Periodical
     end
 
     protected def write(msg, time : Bool = false, color : Symbol? = nil)
-      msg = "#{Time.now.to_local.to_s(@time_format)} #{msg}" if time
+      msg = "#{Pretty.now.to_local.to_s(@time_format)} #{msg}" if time
       msg = msg.colorize(color) if @color && color
       @io.try(&.puts msg)
       @io.try(&.flush)
@@ -182,14 +182,14 @@ module Periodical
     end
 
     def report
-      if next_report_time <= Time.now
+      if next_report_time <= Pretty.now
         yield
         set_next_report_time
       end
     end
 
     private def set_next_report_time
-      @next_report_time = Time.now + @interval
+      @next_report_time = Pretty.now + @interval
     end
   end
 end

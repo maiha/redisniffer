@@ -19,7 +19,7 @@ describe RedisFlusher do
       stats[7002] = {"CLIENT" => 1}
       flusher.flush(stats, addrs)
 
-      values = redis.keys("*").map{|key| redis.zrevrange(key, 0, -1, "WITHSCORES")}
+      values = redis.keys("*").map{|key| redis.zrevrange(key.to_s, 0, -1, "WITHSCORES")}
       expected = [
         %(["AUTH", "10", "PING", "5"]),
         %(["AUTH", "10", "PING", "5"]),
@@ -66,7 +66,7 @@ describe RedisFlusher do
       addrs[7002] = {"127.0.0.1" => 1}
       flusher.flush(stats, addrs)
 
-      values = redis.keys("*").map{|key| redis.zrevrange(key, 0, -1, "WITHSCORES")}
+      values = redis.keys("*").map{|key| redis.zrevrange(key.to_s, 0, -1, "WITHSCORES")}
       expected = [
         %(["127.0.0.1", "1"]),
         %(["192.168.0.1", "10", "127.0.0.1", "5"]),
@@ -84,7 +84,7 @@ describe RedisFlusher do
       addrs[7002] = {"127.0.0.1" => 1}
       flusher.flush(stats, addrs)
 
-      values = redis.keys("*").map{|key| redis.zrevrange(key, 0, -1, "WITHSCORES")}
+      values = redis.keys("*").map{|key| redis.zrevrange(key.to_s, 0, -1, "WITHSCORES")}
       
       expected = [
         %(["192.168.0.1", "10", "127.0.0.1", "6"]),

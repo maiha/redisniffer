@@ -1,7 +1,7 @@
 /doc/
 /lib/
 /bin/
-/.shards/
+/shard.lock
+/.crystal/
 /.crystal-version
 /redisniffer
-/shard.lock
